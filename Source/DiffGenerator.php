@@ -37,19 +37,6 @@ class DiffGenerator {
 		$this->breaker->setStringToBreak($this->newString);
 		$this->breaker->breakIntoEvenChunks($chunkSize);
 		$this->newChunks = $this->breaker->getChunkArray();
-		
-		
-		foreach($this->originalChunks as $chunk) {
-			echo $chunk . '<br />';
-		}
-		
-		echo '<br />';
-		
-		foreach($this->newChunks as $chunk) {
-			echo $chunk . '<br />';
-		}
-		
-		echo '<br />';
 	}
 	
 	public function breakIntoDelimitedChunks() {
@@ -60,18 +47,6 @@ class DiffGenerator {
 		$this->breaker->setStringToBreak($this->newString);
 		$this->breaker->breakIntoDelimitedChunks();
 		$this->newChunks = $this->breaker->getChunkArray();
-		
-		foreach($this->originalChunks as $chunk) {
-			echo $chunk . '<br />';
-		}
-		
-		echo '<br />';
-		
-		foreach($this->newChunks as $chunk) {
-			echo $chunk . '<br />';
-		}
-		
-		echo '<br />';
 	}
 	
 	public function calculateDiffs() {
@@ -79,17 +54,6 @@ class DiffGenerator {
 		$this->initializeLCSMatrix();
 		$this->calculateLCSMatrix();
 		$this->traceThroughLCSMatrix($this->originalEnd - $this->start + 1, $this->newEnd - $this->start + 1);
-		
-		$currentLine = '';
-		
-		for($row = 0; $row < ($this->originalEnd - $this->start) + 2; $row++) {
-			for($column = 0; $column < ($this->newEnd - $this->start) + 2; $column++) {
-				$currentLine .= $this->lcsMatrix[$row][$column] . ' ';
-			}
-			
-			echo $currentLine . '<br />';
-			$currentLine = '';
-		}
 	}
 	
 	public function getDiffs() {
@@ -107,11 +71,6 @@ class DiffGenerator {
 			$this->start < $this->originalEnd && $this->start < $this->newEnd && $this->originalEnd > 0 && $this->newEnd > 0 && $this->originalChunks[$this->originalEnd]->getHash() == $this->newChunks[$this->newEnd]->getHash();
 			$this->originalEnd--, $this->newEnd--
 		);
-		
-		echo 'Start: ' . $this->start . '<br />';
-		echo 'Original end: ' . $this->originalEnd . '<br />';
-		echo 'New end: ' . $this->newEnd . '<br />';
-		echo '<br />';
 	}
 	
 	private function initializeLCSMatrix() {
@@ -135,16 +94,13 @@ class DiffGenerator {
 	private function traceThroughLCSMatrix($row, $column) {
 		if($row > 0 && $column > 0 && $this->originalChunks[$row + $this->start - 1]->getHash() == $this->newChunks[$column + $this->start - 1]->getHash()) {
 			$this->traceThroughLCSMatrix($row - 1, $column - 1);
-			echo $this->originalChunks[$row + $this->start - 1] . '<br />';
 			$this->diffs[$this->diffsArrayPointer++] = new Diff($this->originalChunks[$row + $this->start - 1]->getChunk());
 		} else {
 			if($column > 0 && ($row == 0 || $this->lcsMatrix[$row][$column - 1] >= $this->lcsMatrix[$row - 1][$column])) {
 				$this->traceThroughLCSMatrix($row, $column - 1);
-				echo '+ ' . $this->newChunks[$column + $this->start - 1] . '<br />';
 				$this->diffs[$this->diffsArrayPointer++] = new Diff($this->newChunks[$column + $this->start - 1]->getChunk(), '+');
 			} elseif($row > 0 && ($column == 0 || $this->lcsMatrix[$row][$column - 1] < $this->lcsMatrix[$row - 1][$column])) {
 				$this->traceThroughLCSMatrix($row - 1, $column);
-				echo '- ' . $this->originalChunks[$row + $this->start - 1] . '<br />';
 				$this->diffs[$this->diffsArrayPointer++] = new Diff($this->originalChunks[$row + $this->start - 1]->getChunk(), '-');
 			}
 		}
