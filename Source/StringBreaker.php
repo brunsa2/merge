@@ -9,15 +9,21 @@ class StringBreaker {
 	private $chunks = array();
 	private $chunksArrayPointer = 0;
 	
-	public function __construct($stringToBreak = '') {
+	public function __construct() {
+	}
+	
+	public function setStringToBreak($stringToBreak = '') {
 		$this->stringToBreak = (string) $stringToBreak;
+		
+		$this->chunks = array();
+		$this->chunksArrayPointer = 0;
 	}
 	
 	public function breakIntoEvenChunks($chunkSize = 1) {
 		$stringPointer = 0;
 		
 		for($currentChunk = 0; $currentChunk < $this->getNumberOfChunks($chunkSize); $currentChunk++) {
-			$chunk = new Chunk(substr($this->stringToBreak, $stringPointer, $chunkSize), $currentChunk, $stringPointer, $stringPointer + $chunkSize - 1);
+			$chunk = new Chunk(substr($this->stringToBreak, $stringPointer, $chunkSize), $currentChunk, $stringPointer, $stringPointer + strlen(substr($this->stringToBreak, $stringPointer, $chunkSize)) - 1);
 			$stringPointer += $chunkSize;
 			$this->chunks[$this->chunksArrayPointer++] = $chunk;
 		}
