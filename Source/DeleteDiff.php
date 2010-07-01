@@ -6,12 +6,20 @@ class DeleteDiff extends Diff {
 		$this->originalChunkNumber = $originalChunkNumber;
 	}
 	
+	public function getOriginalChunkNumber() {
+		return $this->originalChunkNumber;
+	}
+	
 	public function getNewChunkNumber() {
-		throw new Exception('Operation not supported');
+		return -1;
 	}
 	
 	public function __toString() {
 		return '- (' . $this->originalChunkNumber . ', -) ' . $this->chunk;
+	}
+	
+	public function getChunk($removeNewline = false) {
+		return $removeNewline ? substr($this->chunk, 0, strlen($this->chunk) - 1): $this->chunk;
 	}
 }
 
