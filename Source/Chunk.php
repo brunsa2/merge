@@ -21,6 +21,22 @@ class Chunk {
 		$stringRepresentation .= '; end: ' . $this->endPosition . '; number: ' . $this->chunkNumber . ')';
 		return $stringRepresentation;
 	}
+	
+	public function getChunk() {
+		return $this->chunk;
+	}
+	
+	public function getHash() {
+		return $this->hash;
+	}
+	
+	public function getStartPosition() {
+		return $this->startPosition;
+	}
+	
+	public function getEndPosition() {
+		return $this->endPosition;
+	}
 }
 
 ?>

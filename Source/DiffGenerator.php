@@ -21,8 +21,6 @@ class DiffGenerator {
 	}
 	
 	public function breakIntoEvenChunks($chunkSize = 1) {
-		$this->breaker = new StringBreaker();
-		
 		$this->breaker->setStringToBreak($this->originalString);
 		$this->breaker->breakIntoEvenChunks($chunkSize);
 		$this->originalChunks = $this->breaker->getChunkArray();
@@ -31,6 +29,26 @@ class DiffGenerator {
 		$this->breaker->breakIntoEvenChunks($chunkSize);
 		$this->newChunks = $this->breaker->getChunkArray();
 		
+		
+		foreach($this->originalChunks as $chunk) {
+			echo $chunk . '<br />';
+		}
+		
+		echo '<br />';
+		
+		foreach($this->newChunks as $chunk) {
+			echo $chunk . '<br />';
+		}
+	}
+	
+	public function breakIntoDelimitedChunks() {
+		$this->breaker->setStringToBreak($this->originalString);
+		$this->breaker->breakIntoDelimitedChunks();
+		$this->originalChunks = $this->breaker->getChunkArray();
+		
+		$this->breaker->setStringToBreak($this->newString);
+		$this->breaker->breakIntoDelimitedChunks();
+		$this->newChunks = $this->breaker->getChunkArray();
 		
 		foreach($this->originalChunks as $chunk) {
 			echo $chunk . '<br />';
