@@ -13,6 +13,8 @@ class DiffGenerator {
 	private $originalEnd;
 	private $newEnd;
 	
+	private $lcsMatrix;
+	
 	public function __construct($originalString = '', $newString = '') {
 		$this->originalString = (string) $originalString;
 		$this->newString = (string) $newString;
@@ -71,6 +73,19 @@ class DiffGenerator {
 	
 	public function calculateDiffs() {
 		$this->findStartAndEndPositions();
+		$this->initializeLCSMatrix();
+		$this->calculateLCSMatrix();
+		
+		$currentLine = '';
+		
+		for($row = 0; $row < ($this->originalEnd - $this->start) + 2; $row++) {
+			for($column = 0; $column < ($this->newEnd - $this->start) + 2; $column++) {
+				$currentLine .= $this->lcsMatrix[$row][$column] . ' ';
+			}
+			
+			echo $currentLine . '<br />';
+			$currentLine = '';
+		}
 	}
 	
 	private function findStartAndEndPositions() {
@@ -88,6 +103,25 @@ class DiffGenerator {
 		echo 'Start: ' . $this->start . '<br />';
 		echo 'Original end: ' . $this->originalEnd . '<br />';
 		echo 'New end: ' . $this->newEnd . '<br />';
+		echo '<br />';
+	}
+	
+	private function initializeLCSMatrix() {
+		for($row = 0; $row < ($this->originalEnd - $this->start) + 2; $row++) {
+			for($column = 0; $column < ($this->newEnd - $this->start) + 2; $column++) {
+				$this->lcsMatrix[$row][$column] = 0;
+			}
+		}
+	}
+	
+	private function calculateLCSMatrix() {
+		for($row = 1; $row < ($this->originalEnd - $this->start) + 2; $row++) {
+			for($column = 1; $column < ($this->newEnd - $this->start) + 2; $column++) {
+				$this->lcsMatrix[$row][$column] = ($this->originalChunks[$row + $this->start - 1]->getHash() == $this->newChunks[$column + $this->start - 1]->getHash()) ?
+					$this->lcsMatrix[$row - 1][$column - 1] + 1 :
+					max($this->lcsMatrix[$row][$column - 1], $this->lcsMatrix[$row - 1][$column]);
+			}
+		}
 	}
 }
 
