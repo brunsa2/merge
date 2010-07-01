@@ -9,6 +9,10 @@ class DiffGenerator {
 	
 	private $breaker;
 	
+	private $start;
+	private $originalEnd;
+	private $newEnd;
+	
 	public function __construct($originalString = '', $newString = '') {
 		$this->originalString = (string) $originalString;
 		$this->newString = (string) $newString;
@@ -39,6 +43,8 @@ class DiffGenerator {
 		foreach($this->newChunks as $chunk) {
 			echo $chunk . '<br />';
 		}
+		
+		echo '<br />';
 	}
 	
 	public function breakIntoDelimitedChunks() {
@@ -59,6 +65,29 @@ class DiffGenerator {
 		foreach($this->newChunks as $chunk) {
 			echo $chunk . '<br />';
 		}
+		
+		echo '<br />';
+	}
+	
+	public function calculateDiffs() {
+		$this->findStartAndEndPositions();
+	}
+	
+	private function findStartAndEndPositions() {
+		for(
+			$this->start = 0;
+			$this->start < min(count($this->originalChunks), count($this->newChunks)) && $this->originalChunks[$this->start]->getHash() == $this->newChunks[$this->start]->getHash();
+			$this->start++
+		);
+		for(
+			$this->originalEnd = count($this->originalChunks) - 1, $this->newEnd = count($this->newChunks) - 1;
+			$this->start < $this->originalEnd && $this->start < $this->newEnd && $this->originalEnd > 0 && $this->newEnd > 0 && $this->originalChunks[$this->originalEnd]->getHash() == $this->newChunks[$this->newEnd]->getHash();
+			$this->originalEnd--, $this->newEnd--
+		);
+		
+		echo 'Start: ' . $this->start . '<br />';
+		echo 'Original end: ' . $this->originalEnd . '<br />';
+		echo 'New end: ' . $this->newEnd . '<br />';
 	}
 }
 
