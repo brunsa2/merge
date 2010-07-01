@@ -2,19 +2,25 @@
 
 class Diff {
 	private $chunk = '';
-	private $type = '';
+	private $originalChunkNumber;
+	private $newChunkNumber;
 	
-	public function __construct($chunk = '', $type = '') {
+	public function __construct($chunk = '', $originalChunkNumber, $newChunkNumber) {
 		$this->chunk = (string) $chunk;
-		$this->type = $type;
+		$this->originalChunkNumber = $originalChunkNumber;
+		$this->newChunkNumber = $newChunkNumber;
 	}
 	
 	public function __toString() {
-		return $this->type . ' ' . $this->chunk;
+		return '(' . $this->originalChunkNumber . ', ' . $this->newChunkNumber . ') ' . $this->chunk;
 	}
 	
-	public function getType() {
-		return $this->type;
+	public function getOriginalChunkNumber() {
+		return $this->originalChunkNumber;
+	}
+	
+	public function getNewChunkNumber() {
+		return $this->newChunkNumber;
 	}
 	
 	public function getChunk() {
