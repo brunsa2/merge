@@ -29,9 +29,10 @@ class StringBreaker {
 		}
 	}
 	
-	public function addDelimiter($left = "", $right = "") {
+	public function addDelimiter($left = "", $right = "", $removeLeftDelimiter = false) {
 		$this->delimiters[$this->delimitersArrayPointer]['left'] = substr($left, 0, 1);
-		$this->delimiters[$this->delimitersArrayPointer++]['right'] = substr($right, 0, 1);
+		$this->delimiters[$this->delimitersArrayPointer]['right'] = substr($right, 0, 1);
+		$this->delimiters[$this->delimitersArrayPointer++]['remove-left-delimiter'] = $removeLeftDelimiter;
 	}
 	
 	public function breakIntoDelimitedChunks() {
@@ -42,8 +43,15 @@ class StringBreaker {
 		while(strlen($this->stringToBreak) > 0) {
 			for($stringPointer = 0; !$this->match(substr($this->stringToBreak, $stringPointer, $stringPointer + 1)) && $stringPointer < strlen($this->stringToBreak) - 1; $stringPointer++);
 			
-			$chunk = new Chunk(substr($this->stringToBreak, 0, $stringPointer + 1), $currentChunkNumber++, $currentPositionInOriginalString, $currentPositionInOriginalString + $stringPointer);
-			$this->chunks[$this->chunksArrayPointer++] = $chunk;
+			$chunkString = substr($this->stringToBreak, 0, $stringPointer + 1);
+			
+			if($this->removeLeftDelimiter(substr($this->stringToBreak, $stringPointer, $stringPointer + 1))) {
+				$chunkString = str_replace($this->getLeftDelimiter(substr($this->stringToBreak, $stringPointer, $stringPointer + 1)), '', $chunkString);
+			}
+			
+			$chunk = new Chunk($chunkString, $currentChunkNumber++, $currentPositionInOriginalString, $currentPositionInOriginalString + $stringPointer);
+			$this->chunks[$this->chunksArrayPointer] = $chunk;
+			$this->chunksArrayPointer++;
 			
 			$this->stringToBreak = substr($this->stringToBreak, $stringPointer + 1);
 			$currentPositionInOriginalString += $stringPointer + 1;
@@ -59,13 +67,31 @@ class StringBreaker {
 	}
 	
 	private function match($substring) {
-		foreach($this->delimiters as $delimiter) {			
+		foreach($this->delimiters as $delimiter) {
 			if(($delimiter['left'] == "" || $delimiter['left'] == substr($substring, 0, 1)) && ($delimiter['right'] == "" || $delimiter['right'] == substr($substring, 1, 1))) {
 				return true;
 			}
 		}
 		
 		return false;
+	}
+	
+	private function removeLeftDelimiter($substring) {
+		foreach($this->delimiters as $delimiter) {
+			if(($delimiter['left'] == "" || $delimiter['left'] == substr($substring, 0, 1)) && ($delimiter['right'] == "" || $delimiter['right'] == substr($substring, 1, 1))) {
+				return $delimiter['remove-left-delimiter'];
+			}
+		}
+		
+		return false;
+	}
+	
+	private function getLeftDelimiter($substring) {
+		foreach($this->delimiters as $delimiter) {			
+			if(($delimiter['left'] == "" || $delimiter['left'] == substr($substring, 0, 1)) && ($delimiter['right'] == "" || $delimiter['right'] == substr($substring, 1, 1))) {
+				return $delimiter['left'];
+			}
+		}
 	}
 }
 

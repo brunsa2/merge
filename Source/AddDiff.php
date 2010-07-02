@@ -18,8 +18,8 @@ class AddDiff extends Diff {
 		return '+ (-, ' . $this->newChunkNumber . ') ' . $this->chunk;
 	}
 	
-	public function getChunk($removeNewline = false) {
-		return $removeNewline ? substr($this->chunk, 0, strlen($this->chunk) - 1): $this->chunk;
+	public function getChunk() {
+		return $this->chunk;
 	}
 }
 

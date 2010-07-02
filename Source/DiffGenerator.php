@@ -25,8 +25,8 @@ class DiffGenerator {
 		$this->breaker = new StringBreaker();
 	}
 	
-	public function addDelimiter($left = "", $right = "") {
-		$this->breaker->addDelimiter($left, $right);
+	public function addDelimiter($left = "", $right = "", $removeLeftDelimiter = false) {
+		$this->breaker->addDelimiter($left, $right, $removeLeftDelimiter);
 	}
 	
 	public function breakIntoEvenChunks($chunkSize = 1) {

@@ -67,11 +67,11 @@ class Region {
 		
 		foreach($this->diffs as $diff) {
 			if($diff instanceof AddDiff) {
-				$regionAsString .= ('+' . $diff->getChunk(true) . "\n");
+				$regionAsString .= ('+' . $diff->getChunk() . "\n");
 			} elseif($diff instanceof DeleteDiff) {
-				$regionAsString .= ('-' . $diff->getChunk(true) . "\n");
+				$regionAsString .= ('-' . $diff->getChunk() . "\n");
 			} else {
-				$regionAsString .= (' ' . $diff->getChunk(true) . "\n");
+				$regionAsString .= (' ' . $diff->getChunk() . "\n");
 			}
 		}
 		
